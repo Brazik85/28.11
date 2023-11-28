@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accordeons</title>
+</head>
+
+<body>
+    <script>
+        function Spoiler(root) {
+            let trigger = root.querySelector('.trigger');
+            let body = root.querySelector('.body');
+            let open = false;
+            let eventOpen = new CustomEvent('open');
+            this.t = trigger;
+            this.b = body;
+            this.open = function () {
+                let h = body.scrollHeight;
+                body.style.height = `${h}px`;
+                open = true;
+                root.dispatchEvent(eventOpen);
+            }
+            this.close = function () {
+                body.style.height = 0;
+                body.style.setProperty('height', null);
+                open = false;
+            }
+            this.toggle = function () {
+                if (open) {
+                    return this.close();
+
+                } else {
+                    return this.open();
+                }
+
+            }
+            trigger.addEventListener('click', this.toggle.bind(this));
+            root.classList.add('ready');
+
+        }
+        function Accordeon(root) {
+            let items = root.querySelectorAll('.spoiler');
+            let arSpiolers = Array.from(items).map(el => new Spoiler(el));
+            let openHandler = function (n) {
+                console.log(n)
+                arSpiolers.forEach(function (sp, i) {
+                    if (i != n) sp.close()
+                })
+
+            }
+            items.forEach((item, i) => item.addEventListener('open', openHandler.bind(this, i)))
+            // items.forEach(el => new Spoiler(el));
+        }
+    </script>
+    <div class="accordeon">
+        <div class="spoiler">
+            <a class="trigger">Фрукты</a>
+            <ul class="body">
+                <li>Яблоко</li>
+                <li>Бананы</li>
+                <li>Ананасы</li>
+                <li>Груши</li>
+                <li>Киви</li>
+            </ul>
+        </div>
+        <div class="spoiler">
+            <a class="trigger">Автомобили</a>
+            <ul class="body">
+                <li>Toyota</li>
+                <li>Nissan</li>
+                <li>Lada</li>
+                <li>Tesla</li>
+            </ul>
+        </div>
+        <div class="spoiler">
+            <button class="trigger">Click me</button>
+            <div class="body">
+                <ul>
+                    <li>1</li>
+                    <li>2</li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+    <script>
+        let elSpoiler = document.querySelector('.spoiler');
+        let obSpoiler = new Spoiler(elSpoiler);
+        document.querySelectorAll('.spoiler').forEach(el => new Spoiler(el));
+        let elAcc = document.querySelector('.accordeon');
+        let obAcc = new Accordeon(elAcc);
+    </script>
+
+    <style>
+        .spoiler .body {
+            overflow: hidden;
+            transition: .3s;
+        }
+
+        .spoiler.ready .body {
+            height: 0;
+        }
+    </style>
+
+
+
+
+</body>
+
+</html>
